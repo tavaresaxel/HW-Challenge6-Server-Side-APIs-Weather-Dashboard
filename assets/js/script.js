@@ -6,10 +6,12 @@ var searchBtnEl = document.getElementById("search-btn")
 var sectionBtnEl = document.getElementById("historyBtn")
 var historyArray = JSON.parse(localStorage.getItem("history")) || []
 
+
+displayHistory()
 function displayHistory(){
-    searchBtnEl.innerHTML = ""
-    for(var i = 0; i < historyArray; i++){
-        sectionBtnEl.innerHTML = searchBtnEl.innerHTML+`<button type="button" class="btn btn-danger bg-danger bg-gradient w-100 mx-2 my-2">${historyArray}</button>`
+    sectionBtnEl.innerHTML =""
+    for(var i = 0; i < historyArray.length; i++){
+        sectionBtnEl.innerHTML = sectionBtnEl.innerHTML+` <button type="button" class="btn btn-danger bg-danger bg-gradient w-100 mx-2 my-2">${historyArray[i]}</button>`
         
 
     }
@@ -38,13 +40,14 @@ function currentWeather(cityName){
             historyArray.push(data.name)
 
             localStorage.setItem("history", JSON.stringify(historyArray))
+            displayHistory()
         }
 
         dashboardEl.innerHTML = `
         <h3>${data.name} (${dayjs.unix(data.dt).format("MM/DD/YYYY")}) <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt=""></h3>
-        <p>Temp: 75 F</p>
-        <p>Wind: 8.43 MPH</p>
-        <p>Humidity: 44%</p>`
+        <p>Temp: ${data.main.temp} F</p>
+        <p>Wind: ${data.wind.speed} MPH</p>
+        <p>Humidity: ${data.main.humidity}%</p>`
 
         
     })
@@ -82,9 +85,17 @@ function fiveDayForecast(cityName){
             img.src="https://openweathermap.org/img/wn/" +fiveDayArray[i].weather[0].icon +"@2x.png"
             divBody.appendChild(img)
             var pTemp = document.createElement("p")
+            var pWind = document.createElement("p")
+            var pHumidity = document.createElement("p")
             pTemp.classList = "card-text"
             pTemp.textContent = "temp: "+fiveDayArray[i].main.temp
+            pWind.classList = "card-text"
+            pWind.textContent = "wind: "+fiveDayArray[i].wind.speed
+            pHumidity.classList = "card-text"
+            pHumidity.textContent = "humidity: "+fiveDayArray[i].main.humidity
             divBody.appendChild(pTemp)
+            divBody.appendChild(pWind)
+            divBody.appendChild(pHumidity)
             divCard.appendChild(divBody)
             divCol.appendChild(divCard)
 
@@ -95,8 +106,6 @@ function fiveDayForecast(cityName){
 }
 
 
-currentWeather('chicago')
-fiveDayForecast('Chicago')
 
 function search(){
     var cityName = searchInputEl.value
@@ -106,3 +115,4 @@ function search(){
 }
 
 searchBtnEl.addEventListener("click", search)
+
